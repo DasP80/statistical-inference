@@ -3,6 +3,7 @@
 It includes 2 rmarkdown reports covering the following topics:
 
 Part 1: A simulation exercise
+
 Part 2: Basic inferential data analysis
 
 # Part 1: A simulation exercise
