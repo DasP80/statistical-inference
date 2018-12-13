@@ -1,0 +1,113 @@
+---
+title: "Part 2 Basic Inferential Data Analysis"
+author: "Prasanti"
+date: "December 13, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+Overview:
+
+The purpose of the this data analysis is to analyse the ToothGrowth data set by
+comparing the guinea tooth growth by supplement and dose. 
+
+1. Load the ToothGrowth data and perform exploratory data analysis
+
+```{r}
+library(datasets)
+head(ToothGrowth)
+str(ToothGrowth)
+unique(ToothGrowth$dose)
+summary(ToothGrowth)
+```
+About the dataset:
+
+The dataset has 60 observations, 3 variables. There are 2 types of supplements - OJ and VC and 3 levels of dose - 0.5, 1.0 and 2.0. The length ranges from 4.2 to 33.9 with Median length as 19.25. The mean is (18.81) slightly less than the median
+
+```{r}
+library(ggplot2)
+m <- ggplot(ToothGrowth , aes(x = factor(dose), y = len, fill = supp)) + 
+  geom_boxplot()+
+  labs(title="Guinea pig tooth length by dosage for each type of supplement", 
+    x="Dose (mg/day)",
+    y="Tooth Length")
+m
+
+```
+
+2. Basic summary of the data
+
+    . increasing the dosage increases the tooth growth. 
+    
+    . OJ is more effective than VC for tooth growth when the dosage is .5 to 1.0 milligrams per day. But both types of supplements are equally effective when the dosage is 2.0 milligrams per day.
+    
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. 
+
+Hypothesis #1
+
+Null Hypothesis : For the dosage of 0.5 mg/day, the two supplements deliver the same tooth growth.
+alternate hypothesis : OJ group delivers more tooth growth than VC.
+
+```{r}
+data = subset(ToothGrowth, dose == 0.5)
+g_oj = data$len[data$supp == "OJ"]
+g_vc = data$len[data$supp == "VC"]
+lower <- t.test(g_oj, g_vc, paired = F, var.equal = F)
+lower$conf.int
+lower$p.value
+
+
+```
+The p-value is below the 0.05. So the null hypothesis can be rejected.
+The 95% confidence interval is entirely above zero when considered the OJ group first and then the VC group. It suggests that for 0.5 mg/day dosage, the OJ supplement delivers more tooth growth than VC.
+So the alternative hypothesis is accepted.
+
+
+Hypothesis #2
+
+Null Hypothesis : For the dosage of 1 mg/day, the two supplements deliver the same tooth growth. 
+alternate hypothesis :OJ group delivers more tooth growth than VC.
+
+```{r}
+data = subset(ToothGrowth, dose == 1)
+g_oj = data$len[data$supp == "OJ"]
+g_vc = data$len[data$supp == "VC"]
+middle <- t.test(g_oj, g_vc, paired = F, var.equal = F)
+middle$conf.int
+middle$p.value
+
+
+```
+The p-value is below the 0.05. So the null hypothesis can be rejected.
+The 95% confidence interval is entirely above zero when considered the OJ group first and then the VC group. It suggests that for 1 mg/day dosage, the OJ supplement delivers more tooth growth than VC.
+So the alternative hypothesis is accepted.
+
+Hypothesis #3
+
+Null Hypothesis : For the dosage of 2 mg/day, the two supplements deliver the same tooth growth.
+
+alternate hypothesis : OJ group delivers more tooth growth than VC.
+
+```{r}
+data = subset(ToothGrowth, dose == 2)
+g_oj = data$len[data$supp == "OJ"]
+g_vc = data$len[data$supp == "VC"]
+upper <- t.test(g_oj, g_vc, paired = F, var.equal = F)
+upper$conf.int
+upper$p.value
+
+
+```
+The p-value is larger than the 0.05 threshold. So we fail to reject the null hypothesis.The confidence interval includes 0 which suggest no difference between two groups. So the null hypothesis is accepted.
+
+
+4. State your conclusions and the assumptions needed for your conclusions.
+
+conclusions :
+OJ is more effective than VC for tooth growth when the dosage is .5 to 1.0 milligrams per day. But both types of supplements are equally effective when the dosage is 2.0 milligrams per day. So for the entire data set we cannot conclude if OJ is more effective than VC.
+
+Assumptions:
+tooth lengths data follows normal distribution
+variances are not equal
+No other factors are affecting tooth length
+
