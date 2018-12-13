@@ -7,14 +7,11 @@ output:
 ---
 Overview: 
 
-The purpose of this data analysis is to investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. The lambda will be set to 0.2 for all of the simulations. This investigation will compare the distribution of averages of 40 exponentials over 1000 simulations.
+The purpose of this data analysis is to investigate the exponential distribution in R and compare it with the Central Limit Theorem. The lambda will be set to 0.2 for all of the simulations. This investigation will compare the distribution of averages of 40 exponentials over 1000 simulations.
 
 
 Simulations: 
-
 Set the simulation variables lambda, exponentials, and seed.
-
-
 
 ```{r}
 
@@ -35,19 +32,33 @@ sample_means_exp <- apply(sim_exp, 2, mean)
 ```{r}
 # determine the mean of our sample means
 sample_mean <- mean(sample_means_exp)
-
-
-#The theoretical mean of an exponential distribution is 1/lambda. lambda is 0.2. Therefore, the theoretical mean should be 1/ 0.2
-
+#The theoretical mean of an exponential distribution is 1/lambda. lambda is 0.2
+#Therefore, the theoretical mean should be 1/ 0.2
 theory_mean <- 1 / lambda
-
 print(paste("Theoretical Mean: ", theory_mean))
 print(paste("Sample Mean: ", sample_mean))
+
+library(ggplot2)
+data <- data.frame(sample_means_exp)
+
+m <- ggplot(data, aes(x =sample_means_exp))
+m <- m + geom_histogram(aes(y=..density..), 
+                        color="black",
+                        fill = "grey66", 
+                        binwidth=0.2
+                        )
+m <- m + geom_vline(aes(xintercept = sample_mean, colour = "Simulated"))
+m <- m + geom_vline(aes(xintercept = theory_mean, colour = "Normal"))
+
+m <- m + scale_colour_manual("Density", values = c("red", "gold1"))
+m <- m + labs(title="Distribution of Sample means", x="Simulation Mean", y = "Density")
+m
+
 ```
 
 
-The code above shows that there is only a slight difference between the simulations sample mean and the 
-exponential distribution theoretical mean.
+The code above shows that the simulations sample mean and the 
+exponential distribution theoretical mean are close.
 
 2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
 Sample Variance vs Theoretical Variance
@@ -66,7 +77,7 @@ Plot the density histogram for the 1000 simulations and overlay with the theoret
 
 
 ```{r}
-library(ggplot2)
+
 data <- data.frame(sample_means_exp)
 
 m <- ggplot(data, aes(x =sample_means_exp))
